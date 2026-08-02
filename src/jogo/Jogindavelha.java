@@ -23,17 +23,14 @@
 
             JPanel painelTabuleiro = new JPanel();
             painelTabuleiro.setLayout(new GridLayout(3, 3));
-
             Font fonte = new Font("Arial", Font.BOLD, 40);
 
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
-
                     botoes[i][j] = new JButton("");
                     botoes[i][j].setFont(fonte);
                     botoes[i][j].addActionListener(this);
                     painelTabuleiro.add(botoes[i][j]);
-
                 }
             }
 
@@ -49,6 +46,7 @@
             painelBotoes.add(btnSair);
 
             add(lblVez, BorderLayout.NORTH);
+
             add(painelTabuleiro, BorderLayout.CENTER);
             add(painelBotoes, BorderLayout.SOUTH);
 
@@ -75,7 +73,7 @@
                         if (verificarVencedor()) {
 
                             JOptionPane.showMessageDialog(this,
-                                    "Parabéns!\nJogador " + jogador + " venceu!");
+                                    "Parabens\nJogador " + jogador + " venceu!");
 
                             bloquearTabuleiro();
                             return;
@@ -84,7 +82,7 @@
                         if (verificarEmpate()) {
 
                             JOptionPane.showMessageDialog(this,
-                                    "Empate!\nNenhum jogador venceu.");
+                                    "Empate\nNenhum jogador venceu.");
 
                             return;
                         }
