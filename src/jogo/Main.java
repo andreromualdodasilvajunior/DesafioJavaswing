@@ -1,7 +1,9 @@
-package jogin;
+package jogo;
+
 public class Main {
+
     public static void main(String[] args) {
-new Jogindavelha(
+        new Jogindavelha();
     }
 
 }
