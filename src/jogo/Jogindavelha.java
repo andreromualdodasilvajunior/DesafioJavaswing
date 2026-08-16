@@ -1,181 +1,106 @@
-    package jogo;
+package jogo;
+import javax.swing.*;
+import java.awt.*;
 
-    import java.awt.*;
-    import java.awt.event.*;
-    import javax.swing.*;
+public class Jogindavelha extends JFrame {
 
-    public class Jogindavelha extends JFrame implements ActionListener {
+   private JButton[] casas = new JButton[9];
+   private boolean vezDoX = true;
 
-        JButton[][] botoes = new JButton[3][3];
-        JLabel lblVez;
-        JButton btnNovo, btnSair;
+   public Jogindavelha() {
+      setTitle("Jogo da velha");
+      setSize(600, 600);
+      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      setLocationRelativeTo(null);
 
-        char jogador = 'X';
-        int jogadas = 0;
+        JPanel tabuleiro = new JPanel(new GridLayout(3, 3));
 
-        public Jogindavelha() {
+        for (int i = 0; i < casas.length; i++) {
+            int posicao = i;
 
-            setTitle("Jogo da velha");
-            setSize(400, 450);
-            setDefaultCloseOperation(EXIT_ON_CLOSE);
-            setLocationRelativeTo(null);
-            setLayout(new BorderLayout());
+            casas[i] = new JButton();
+            casas[i].setFont(new Font("Arial", Font.BOLD, 70));
 
-            JPanel painelTabuleiro = new JPanel();
-            painelTabuleiro.setLayout(new GridLayout(3, 3));
-            Font fonte = new Font("Arial", Font.BOLD, 40);
+            casas[i].addActionListener(e -> jogar(posicao));
 
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    botoes[i][j] = new JButton("");
-                    botoes[i][j].setFont(fonte);
-                    botoes[i][j].addActionListener(this);
-                    painelTabuleiro.add(botoes[i][j]);
-                }
-            }
-
-            lblVez = new JLabel("Vez do jogador: X", SwingConstants.CENTER);
-
-            JPanel painelBotoes = new JPanel();
-
-            btnNovo = new JButton("Novo jogo");
-            btnSair = new JButton("Sair");
-            btnNovo.addActionListener(this);
-            btnSair.addActionListener(this);
-            painelBotoes.add(btnNovo);
-            painelBotoes.add(btnSair);
-
-            add(lblVez, BorderLayout.NORTH);
-
-            add(painelTabuleiro, BorderLayout.CENTER);
-            add(painelBotoes, BorderLayout.SOUTH);
-
-            setVisible(true);
+            tabuleiro.add(casas[i]);
         }
-        @Override
-        public void actionPerformed(ActionEvent e) {
 
-            if (e.getSource() == btnNovo) {
+        add(tabuleiro);
+        setVisible(true);
+    }
+    private void jogar(int posicao) {
+
+        if (!casas[posicao].getText().isEmpty()) {
+            return;
+        }
+
+        if (vezDoX) {
+            casas[posicao].setText("X");
+            casas[posicao].setForeground(Color.RED);
+        } else {
+            casas[posicao].setText("O");
+            casas[posicao].setForeground(Color.BLUE);
+        }
+        verificarResultado();
+
+        vezDoX = !vezDoX;
+    }
+
+    private void verificarResultado() {
+
+        int[][] combinacoes = {
+            {0, 1, 2},
+            {3, 4, 5},
+            {6, 7, 8},
+            {0, 3, 6},
+            {1, 4, 7},
+            {2, 5, 8},
+            {0, 4, 8},
+            {2, 4, 6}
+        };
+
+        for (int[] combinacao : combinacoes) {
+
+            String primeiro = casas[combinacao[0]].getText();
+            String segundo = casas[combinacao[1]].getText();
+            String terceiro = casas[combinacao[2]].getText();
+            if (!primeiro.isEmpty()
+                    && primeiro.equals(segundo)
+                    && segundo.equals(terceiro)) {
+
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Jogador " + primeiro + " venceu"
+                );
+
                 novoJogo();
                 return;
             }
-            if (e.getSource() == btnSair) {
-                System.exit(0);
+        }
+boolean tabuleiroCheio = true;
+
+        for (JButton casa : casas) {
+            if (casa.getText().isEmpty()) {
+                tabuleiroCheio = false;
+                break;
             }
-            for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                    if (e.getSource() == botoes[i][j]) {
-
-                        botoes[i][j].setText(String.valueOf(jogador));
-                        botoes[i][j].setEnabled(false);
-                        jogadas++;
-
-                        if (verificarVencedor()) {
-
-                            JOptionPane.showMessageDialog(this,
-                                    "Parabens\nJogador " + jogador + " venceu!");
-
-                            bloquearTabuleiro();
-                            return;
-                        }
-
-                        if (verificarEmpate()) {
-
-                            JOptionPane.showMessageDialog(this,
-                                    "Empate\nNenhum jogador venceu.");
-
-                            return;
-                        }
-
-                        alternarJogador();
-
-                    }
-
-                }
-            }
-
         }
 
-        public void alternarJogador() {
-
-            if (jogador == 'X') {
-                jogador = 'O';
-            } else {
-                jogador = 'X';
-            }
-
-            lblVez.setText("Vez do jogador: " + jogador);
-
+        if (tabuleiroCheio) {
+            JOptionPane.showMessageDialog(this, "Deu empate");
+            novoJogo();
         }
-        public boolean verificarVencedor() {
-
-            for (int i = 0; i < 3; i++) {
-
-                if (!botoes[i][0].getText().equals("") &&
-                    botoes[i][0].getText().equals(botoes[i][1].getText()) &&
-                    botoes[i][1].getText().equals(botoes[i][2].getText())) {
-                    return true;
-                }
-
-                if (!botoes[0][i].getText().equals("") &&
-                    botoes[0][i].getText().equals(botoes[1][i].getText()) &&
-                    botoes[1][i].getText().equals(botoes[2][i].getText())) {
-                    return true;
-                }
-            }
-
-            if (!botoes[0][0].getText().equals("") &&
-                botoes[0][0].getText().equals(botoes[1][1].getText()) &&
-                botoes[1][1].getText().equals(botoes[2][2].getText())) {
-                return true;
-            }
-
-            if (!botoes[0][2].getText().equals("") &&
-                botoes[0][2].getText().equals(botoes[1][1].getText()) &&
-                botoes[1][1].getText().equals(botoes[2][0].getText())) {
-                return true;
-            }
-
-            return false;
-        }
-
-        public boolean verificarEmpate() {
-
-            if (jogadas == 9) {
-                return true;
-            }
-
-            return false;
-        }
-
-        public void novoJogo() {
-
-            jogador = 'X';
-            jogadas = 0;
-
-            lblVez.setText("Vez do jogador: X");
-
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-
-                    botoes[i][j].setText("");
-                    botoes[i][j].setEnabled(true);
-
-                }
-            }
-
-        }
-
-        public void bloquearTabuleiro() {
-
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-
-                    botoes[i][j].setEnabled(false);
-
-                }
-            }
-
-        }
-
     }
+
+    private void novoJogo() {
+
+        for (JButton casa : casas) {
+            casa.setText("");
+            casa.setForeground(Color.BLACK);
+        }
+
+        vezDoX = true;
+    }
+}
+
