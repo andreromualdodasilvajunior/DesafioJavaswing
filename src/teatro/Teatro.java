@@ -1,5 +1,6 @@
 package teatro;
 
-public class Teatro {
+public class Teatro extends JFrame {
+
     
 }
